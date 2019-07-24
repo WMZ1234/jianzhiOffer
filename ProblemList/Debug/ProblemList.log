@@ -1,0 +1,8 @@
+﻿  源.cpp
+e:\work\problemlist\problemlist\problemlist\源.cpp(216): warning C4018: “<”: 有符号/无符号不匹配
+e:\work\problemlist\problemlist\problemlist\源.cpp(217): warning C4018: “<”: 有符号/无符号不匹配
+e:\work\problemlist\problemlist\problemlist\源.cpp(523): warning C4018: “<”: 有符号/无符号不匹配
+e:\work\problemlist\problemlist\problemlist\源.cpp(759): warning C4273: “memmove”: dll 链接不一致
+  e:\microsoft visual studio 14.0\vc\include\vcruntime_string.h(47): note: 参见“memmove”的前一个定义
+  ProblemList.vcxproj -> E:\work\ProblemList\ProblemList\Debug\ProblemList.exe
+  ProblemList.vcxproj -> E:\work\ProblemList\ProblemList\Debug\ProblemList.pdb (Full PDB)
