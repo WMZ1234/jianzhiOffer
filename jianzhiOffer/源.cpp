@@ -191,15 +191,15 @@ void PreOrderNonRecur(BinaryTreeNode* pRoot) {
 		pTemp = stack1.top();
 		printf("%d\t", pTemp->m_nValue);
 		stack1.pop();
-		if (pTemp->m_pLeft != nullptr) stack1.push(pTemp->m_pLeft);
 		if (pTemp->m_pRight != nullptr) stack1.push(pTemp->m_pRight);
+		if (pTemp->m_pLeft != nullptr) stack1.push(pTemp->m_pLeft);
 	}
 }
 
 void InOrderNonRecur(BinaryTreeNode* pRoot) {
 	stack<BinaryTreeNode*> stack1;
 	BinaryTreeNode* cur = pRoot;
-	while (!stack1.empty() || pRoot != nullptr) {
+	while (!stack1.empty() || cur != nullptr) {
 		while (cur) {
 			stack1.push(cur);
 			cur = cur->m_pLeft;
@@ -220,8 +220,8 @@ void PostOrderNonRecur1(BinaryTreeNode* pRoot) {
 	while (!stack1.empty()) {
 		BinaryTreeNode* cur = stack1.top();
 		stack1.pop();
-		if (cur->m_pRight != nullptr) stack1.push(cur->m_pRight);
 		if (cur->m_pLeft != nullptr) stack1.push(cur->m_pLeft);
+		if (cur->m_pRight != nullptr) stack1.push(cur->m_pRight);
 		stack2.push(cur);
 	}
 
@@ -247,6 +247,7 @@ void PostOrderNonRecur2(BinaryTreeNode* pRoot) {
 		else {
 			BinaryTreeNode* pTemp = stack1.top();
 			printf("%d\t", pTemp->m_nValue);
+			stack1.pop();
 			h = c;
 		}
 	}
@@ -324,10 +325,121 @@ BinaryTreeNodeAll* GetNext(BinaryTreeNodeAll* pNode) {
 	return pNext;
 }
 
+//9.两个栈实现一个队列
+template<typename T>
+class CQueue {
+public:
+	CQueue(void);
+	~CQueue(void);
+
+	void appendToTail(const T& node);
+	T deleteHead();
+
+private:
+	stack<T> stack1;
+	stack<T> stack2;
+};
+
+template<typename T>
+void CQueue<T>::appendToTail(const T& node) {
+	stack1.pop();
+}
+
+template<typename T>
+T CQueue<T>::deleteHead() {
+	if (stack2.size() <= 0) {
+		while (!stack1.empty()) {
+			stack2.push(stack1.top());
+			stack1.pop();
+		}
+	}
+
+	if (stack2.empty()) throw new exception("queue is empty!");
+
+	T node = stack2.top();
+	stack2.pop();
+	return node;
+}
+
+//两个队列实现一个栈
+template<typename T>
+class CStack {
+public:
+	CStack(void);
+	~CStack(void);
+
+	void appendToTail(T node);
+	T deleteHead();
+
+private:
+	queue<T> queue1;
+	queue<T> queue2;
+};
+
+template<typename T>
+void CStack<T>::appendToTail(T node) {
+	queue1.push(node);
+}
+
+template<typename T>
+T CStack<T>::deleteHead() {
+	if (queue1.empty()) throw new exception("stack is empty!");
+	while (queue1.size()>1) {
+		queue2.push(queue1.front());
+		queue1.pop();
+	}
+	T head = queue1.front();
+	queue1.pop();
+
+	while (!queue2.empty()) {
+		queue1.push(queue2.front());
+		queue2.pop();
+	}
+	return head;
+}
+
+
+//15.二进制中1的个数
+int NumberOf1(int n) {
+	int count = 0;
+	while (n) {
+		++count;
+		n = n&(n - 1);
+	}
+	return count;
+}
+
+//17.打印从1到最大的n位数
+void PrintNumber(char *number) {
+	int length = strlen(number);
+	bool isbeginning = true;
+	for (int i = 0; i < length; i++) {
+		if (isbeginning&&number[i] != '0')
+			isbeginning = false;
+
+
+	}
+}
+
 int main() {
-	char string[10] = "12345 679";
-	ReplaceBlank(string, 10);
-	cout << string;
+	queue<int> queue1;
+	queue<int> queue2;
+	for (int i = 0; i < 5; i++) {
+		queue1.push(i);
+	}
+	for (int i = 0; i < 5; i++) {
+		while (queue1.size() > 1) {
+			queue2.push(queue1.front());
+			queue1.pop();
+		}
+		cout << queue1.front();
+		queue1.pop();
+
+		while (!queue2.empty()) {
+			queue1.push(queue2.front());
+			queue2.pop();
+		}
+	}
 	system("pause");
 	return 0;
 }
