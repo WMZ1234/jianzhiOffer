@@ -609,6 +609,91 @@ ListNode* ReverseList(ListNode* pHead) {
 	return pReversedHead;
 }
 
+//25.合并两个排序的链表
+ListNode* Merge(ListNode* pHead1, ListNode* pHead2) {
+	if (pHead1 == nullptr) return pHead2;
+	if (pHead2 == nullptr) return pHead1;
+	ListNode* pMergedHead = nullptr;
+	if (pHead1->m_nValue <= pHead2->m_nValue) {
+		pMergedHead = pHead1;
+		pMergedHead->m_pNext = Merge(pHead1->m_pNext, pHead2);
+	}
+	else {
+		pMergedHead = pHead2;
+		pMergedHead->m_pNext = Merge(pHead1, pHead2->m_pNext);
+	}
+	return pMergedHead;
+}
+
+//26.判断B是不是A的子结构
+bool DoesTree1EqualsToTree2(BinaryTreeNode* pRoot1, BinaryTreeNode* pRoot2) {
+	if (pRoot2 == nullptr) return true;
+	if (pRoot1 == nullptr) return false;
+	if (pRoot1->m_nValue != pRoot2->m_nValue) return false;
+	return DoesTree1EqualsToTree2(pRoot1->m_pLeft, pRoot2->m_pLeft) &&
+		DoesTree1EqualsToTree2(pRoot1->m_pRight, pRoot2->m_pRight);
+}
+
+bool HasSubtree(BinaryTreeNode* pRoot1, BinaryTreeNode* pRoot2) {
+	if (pRoot2 == nullptr) return true;
+	bool result = false;
+	if (pRoot1 != nullptr&&pRoot2 != nullptr) {
+		if (pRoot1->m_nValue == pRoot2->m_nValue)
+			result = DoesTree1EqualsToTree2(pRoot1, pRoot2);
+		if (!result) result = DoesTree1EqualsToTree2(pRoot1->m_pLeft, pRoot2);
+		if (!result) result = DoesTree1EqualsToTree2(pRoot1->m_pRight, pRoot2);
+	}
+	return result;
+}
+
+//27.镜像二叉树
+void MirrorBinarytree(BinaryTreeNode* pRoot) {
+	if (pRoot == nullptr) return;
+	if (pRoot->m_pLeft != nullptr || pRoot->m_pRight != nullptr) {
+		BinaryTreeNode* temp = pRoot->m_pLeft;
+		pRoot->m_pLeft = pRoot->m_pRight;
+		pRoot->m_pRight = temp;
+	}
+	if (pRoot->m_pLeft != nullptr) MirrorBinarytree(pRoot->m_pLeft);
+	if (pRoot->m_pRight != nullptr) MirrorBinarytree(pRoot->m_pRight);
+}
+
+//28.判断二叉树是否是对称二叉树
+bool isSymmetrical(BinaryTreeNode* pRoot1, BinaryTreeNode* pRoot2) {
+	if (pRoot1 == nullptr&&pRoot2 == nullptr) return true;
+	if (pRoot1 == nullptr || pRoot2 == nullptr) return false;
+	if (pRoot1->m_nValue != pRoot2->m_nValue) return false;
+	return isSymmetrical(pRoot1->m_pLeft, pRoot2->m_pRight) && isSymmetrical(pRoot1->m_pRight, pRoot2->m_pLeft);
+}
+
+bool isSymmetrical(BinaryTreeNode* pRoot) {
+	return isSymmetrical(pRoot, pRoot);
+}
+
+//31.栈的压入、弹出序列
+bool IsPopOrder(const int* pPush, const int* pPop, int nLength) {
+	bool bPossible = false;
+	if (pPush != nullptr&&pPop != nullptr&&nLength > 0) {
+		stack<int> stackData;
+		const int* pNextPush = pPush;
+		const int* pNextPop = pPop;
+		while (pNextPop - pPop < nLength) {
+			while (stackData.empty() || stackData.top() != *pNextPop) {
+				if(pNextPush-pPush==nLength) break;
+				stackData.push(*pNextPush);
+				pNextPush++;
+			}
+			if (stackData.top() != *pNextPop) break;
+			stackData.pop();
+			++pNextPop;
+		}
+		if (stackData.empty() && pNextPop - pPop == nLength)
+			bPossible=true;
+	}
+	return bPossible;
+}
+
+
 
 
 int main() {
