@@ -416,30 +416,206 @@ void PrintNumber(char *number) {
 	for (int i = 0; i < length; i++) {
 		if (isbeginning&&number[i] != '0')
 			isbeginning = false;
+		if (!isbeginning) printf("%c", number[i]);
+	}
+	if (isbeginning) printf("%c", '0');
+	printf("\t");
+}
 
+void Print1ToMaxOfNDigitsRecursively(char* number, int length, int index) {
+	if (index == length) {
+		PrintNumber(number);
+		return;
+	}
 
+	for (int i = 0; i < 10; i++) {
+		number[index] = i + '0';
+		Print1ToMaxOfNDigitsRecursively(number, length, index + 1);
+	}
+}
+void Print1ToMaxOfNDigits(int n) {
+	if (n <= 0) return;
+	char* number = new char[n + 1];
+	number[n] = '\0';
+	Print1ToMaxOfNDigitsRecursively(number, n, 0);
+	delete[] number;
+}
+
+//18.在O(1)时间内删除链表节点
+void DeleteNode(ListNode** pListHead, ListNode* pToBeDeleted) {
+	//不是尾节点
+	if (pToBeDeleted->m_pNext != nullptr) {
+		ListNode* pNext = pToBeDeleted->m_pNext;
+		pToBeDeleted->m_nValue = pNext->m_nValue;
+		pToBeDeleted->m_pNext = pNext->m_pNext;
+
+		delete pNext;
+		pNext = nullptr;
+	}
+	//只有一个节点，删除头节点（也是尾节点）
+	else if (*pListHead == pToBeDeleted) {
+		delete pToBeDeleted;
+		pToBeDeleted = nullptr;
+		*pListHead = nullptr;		
+	}
+	//链表中有多个节点，删除尾节点
+	else {
+		ListNode* pNode = *pListHead;
+		while (pNode->m_pNext != pToBeDeleted)
+			pNode = pNode->m_pNext;
+		pNode->m_pNext = nullptr;
+		delete pToBeDeleted;
+		pToBeDeleted = nullptr;
 	}
 }
 
-int main() {
-	queue<int> queue1;
-	queue<int> queue2;
-	for (int i = 0; i < 5; i++) {
-		queue1.push(i);
-	}
-	for (int i = 0; i < 5; i++) {
-		while (queue1.size() > 1) {
-			queue2.push(queue1.front());
-			queue1.pop();
+//删除排序链表中的重复节点
+void deleteDuplication(ListNode** pListHead) {
+	ListNode* pPreNode = nullptr;
+	ListNode* pNode = *pListHead;
+	while (pNode != nullptr) {
+		ListNode* pNext = pNode->m_pNext;
+		bool needDelete = false;
+		if (pNext != nullptr && pNode->m_nValue == pNext->m_nValue)
+			needDelete = true;
+		if (!needDelete) {
+			pPreNode = pNode;
+			pNode = pNext;
 		}
-		cout << queue1.front();
-		queue1.pop();
+		else {
+			int value = pNode->m_nValue;
+			ListNode* pToBeDel = pNode;
+			while (pToBeDel != nullptr&&pToBeDel->m_nValue == value) {
+				pNext = pToBeDel->m_pNext;
+				delete pToBeDel;
+				pToBeDel = nullptr;
+				pToBeDel = pNext;
+			}
+			
+			if (pPreNode == nullptr) *pListHead = pNext;
+			else pPreNode->m_pNext = pNext;
+			pNode = pNext;
+		}
+	}
+}
 
-		while (!queue2.empty()) {
-			queue1.push(queue2.front());
-			queue2.pop();
+//19.正则表达式匹配
+bool matchCore(char* str, char* pattern) {
+	if (*str == '\0'&&*pattern == '\0') return true;
+	if (*str != '\0'&&*pattern == '\0') return false;
+
+	if (*(pattern + 1) == '*') {
+		if (*pattern == *str || (*pattern == '.'&&*str != '\0'))
+			return matchCore(str + 1, pattern + 2) ||
+			matchCore(str + 1, pattern) || matchCore(str, pattern + 2);
+		else return matchCore(str, pattern + 2);
+	}
+	if (*str == *pattern || (*pattern == '.'&&*str != '\0')) return matchCore(str + 1, pattern + 1);
+	return false;
+}
+
+//20.表示数值的字符串
+bool scanUnsignedInteger(const char** str) {
+	const char* before = *str;
+	while (**str != '\0'&&**str >= '0'&&**str <= '9')
+		++(*str);
+	return *str > before;
+}
+
+bool scanInteger(const char** str) {
+	if (**str == '+' || **str == '-') ++(*str);
+	return scanUnsignedInteger(str);
+}
+
+bool isNumeric(const char* str) {
+	if (str == nullptr) return false;
+	bool numeric = scanInteger(&str);
+	if (*str == '.') {
+		++str;
+		numeric = scanUnsignedInteger(&str) || numeric;
+	}
+	if (*str == 'e' || *str == 'E') {
+		++str;
+		numeric = scanInteger(&str) && numeric;
+	}
+	return numeric&&*str == '\0';
+}
+
+//21.调整数组顺序是奇数位于偶数前面
+void RecorderOddEven(int* pData, unsigned int length) {
+	if (pData == nullptr || length <=0 ) return;
+	int* pBegin = pData;
+	int* pEnd = pData + length - 1;
+	while (pBegin < pEnd) {
+		while (*pBegin & 0x1) pBegin++;
+		while (!(*pEnd & 0x1)) pEnd--;
+		if (pBegin < pEnd) {
+			int temp = *pBegin;
+			*pBegin = *pEnd;
+			*pEnd = temp;
 		}
 	}
+}
+
+//23.链表中环的入口节点
+//两个指针的相遇点
+ListNode* MeetingNode(ListNode* pHead) {
+	ListNode* pSlow = pHead;
+	ListNode* pFast = pSlow->m_pNext;
+	while (pSlow != pFast) {
+		if (pFast->m_pNext == nullptr)
+			return nullptr;
+		pSlow = pSlow->m_pNext;
+		pFast = pFast->m_pNext;
+		if (pFast != nullptr) pFast = pFast->m_pNext;
+	}
+	return pSlow;
+}
+
+ListNode* EntryNodeOfLoop(ListNode* pHead) {
+	ListNode* meetingNode = MeetingNode(pHead);
+	if (meetingNode == nullptr) return nullptr;
+	ListNode* pNode = meetingNode;
+	int count = 1;
+	while (pNode->m_pNext != meetingNode) {
+		pNode = pNode->m_pNext;
+		count++;
+	}
+	ListNode* pSlow = pHead;
+	ListNode* pFast = pHead;
+	while (count > 0) {
+		pFast = pFast->m_pNext;
+		count--;
+	}
+	while (pSlow != pFast) {
+		pSlow = pSlow->m_pNext;
+		pFast = pFast->m_pNext;
+	}
+	return pSlow;
+}
+
+//24.反转链表
+ListNode* ReverseList(ListNode* pHead) {
+	ListNode* pReversedHead = nullptr;
+	ListNode* pNode = pHead;
+	ListNode* pPrev = nullptr;
+	while (pNode != nullptr) {
+		ListNode* pNext = pNode->m_pNext;
+		if (pNext == nullptr) pReversedHead = pNode;
+		pNode->m_pNext = pPrev;
+		pPrev = pNode;
+		pNode = pNext;
+	}
+	return pReversedHead;
+}
+
+
+
+int main() {
+	char* str = "a";
+	char* pattern = "ab*a";
+	if (matchCore(str, pattern)) cout << "true";
+	else cout << "false";
 	system("pause");
 	return 0;
 }
