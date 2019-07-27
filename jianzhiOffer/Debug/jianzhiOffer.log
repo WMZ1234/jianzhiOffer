@@ -1,3 +1,4 @@
-﻿  源.cpp
-  jianzhiOffer.vcxproj -> E:\work\ProblemList\ProblemList\Debug\jianzhiOffer.exe
-  jianzhiOffer.vcxproj -> E:\work\ProblemList\ProblemList\Debug\jianzhiOffer.pdb (Full PDB)
+﻿cl : 命令行 warning D9028: 最小重新生成失败，正在转换为标准生成
+  源.cpp
+  jianzhiOffer.vcxproj -> E:\cpptest\jianzhiOffer\Debug\jianzhiOffer.exe
+  jianzhiOffer.vcxproj -> E:\cpptest\jianzhiOffer\Debug\jianzhiOffer.pdb (Full PDB)

@@ -693,8 +693,82 @@ bool IsPopOrder(const int* pPush, const int* pPop, int nLength) {
 	return bPossible;
 }
 
+//25(2).二叉树中和为某一值的路径
+void FindPath(BinaryTreeNode* pRoot, int expectedSum
+	, vector<int>& path, int& currentSum) {
+	currentSum += pRoot->m_nValue;
+	path.push_back(pRoot->m_nValue);
+	if (pRoot->m_pLeft == nullptr&&pRoot->m_pRight == nullptr&&
+		expectedSum == currentSum) {
+		vector<int>::iterator itr = path.begin();
+		for (; itr != path.end(); itr++)
+			printf("%d\t", *itr);
+		printf("\n");
+	}
+	if (currentSum < expectedSum) {
+		if (pRoot->m_pLeft != nullptr) FindPath(pRoot->m_pLeft, expectedSum, path, currentSum);
+		if (pRoot->m_pRight != nullptr) FindPath(pRoot->m_pRight, expectedSum, path, currentSum);
+	}
 
+	currentSum -= pRoot->m_nValue;
+	path.pop_back();
+}
 
+void FindPath(BinaryTreeNode* pRoot, int expectedSum) {
+	if (pRoot == nullptr) return;
+	vector<int> path;
+	int currentSum = 0;
+	FindPath(pRoot, expectedSum, path, currentSum);
+}
+
+//26(2).复杂链表的复制
+struct ComplexListNode {
+	int m_nValue;
+	ComplexListNode* m_pNext;
+	ComplexListNode* m_pSibling;
+};
+//1.复制结点
+void CloneNodes(ComplexListNode* pHead) {
+	ComplexListNode* pNode = pHead;
+	while (pNode != nullptr) {
+		ComplexListNode* pTemp = new ComplexListNode();
+		pTemp->m_nValue = pNode->m_nValue;
+		pTemp->m_pNext = pNode->m_pNext;
+		pTemp->m_pSibling = pNode->m_pSibling;
+
+		pNode->m_pNext = pTemp;
+		pNode = pTemp->m_pNext;
+	}
+}
+
+//2.连接m_pSibling
+void ConnectSiblingNodes(ComplexListNode* pHead) {
+	ComplexListNode* pNode = pHead;
+	while (pNode != nullptr) {
+		ComplexListNode* pClonedNode = pNode->m_pNext;
+		pClonedNode->m_pSibling = pNode->m_pSibling->m_pNext;
+		pNode = pClonedNode->m_pNext;
+	}
+}
+//3.分成两个链表
+ComplexListNode* ReconnecteNodes(ComplexListNode* pHead) {
+	ComplexListNode* pNode = pHead;
+	ComplexListNode* pClonedHead = nullptr;
+	ComplexListNode* pClonedNode = pClonedHead;
+
+	if (pNode != nullptr) {
+		pClonedNode=pClonedHead = pNode->m_pNext;
+		pNode->m_pNext = pClonedNode->m_pNext;
+		pNode = pNode->m_pNext;
+	}
+	while (pNode != nullptr) {
+		pClonedNode->m_pNext = pNode->m_pNext;
+		pClonedNode = pClonedNode->m_pNext;
+		pNode->m_pNext = pClonedNode->m_pNext;
+		pNode = pNode->m_pNext;
+	}
+	return pClonedHead;
+}
 
 int main() {
 	char* str = "a";
